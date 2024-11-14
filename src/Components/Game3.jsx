@@ -12,7 +12,7 @@ const Game3 = ({ onNext }) => {
     setBoard(newBoard);
 
     if (checkWin(newBoard)) {
-      setIsGameOver(true);
+      setIsGameOver(true); // Set game over if the player wins
     } else {
       aiMove(newBoard);
     }
@@ -24,8 +24,10 @@ const Game3 = ({ onNext }) => {
     newBoard[randomMove] = "O";
     setBoard(newBoard);
 
+    // If the AI wins, don't set game over, just let the player reset the game manually
     if (checkWin(newBoard)) {
-      setIsGameOver(true);
+      // No need to set game over; we'll leave it up to the user to restart
+      // setIsGameOver(true); // No need to do this anymore
     }
   };
 
@@ -44,29 +46,29 @@ const Game3 = ({ onNext }) => {
     return null;
   };
 
-  // Handle restart
+  // Handle manual restart
   const handleRestart = () => {
     setBoard(Array(9).fill(null)); // Reset board
     setIsGameOver(false); // Reset game over state
   };
 
   return (
-    <div className="game-page" style={{position: "relative"}}>
+    <div className="game-page" style={{ position: "relative" }}>
       <p>Each move brings us closer and closer to the start of something beautiful</p>
       <div className="tic-tac-toe">
         {board.map((cell, idx) => (
           <button key={idx} onClick={() => handleMove(idx)}>{cell}</button>
         ))}
       </div>
-      <p><em onClick={handleRestart} style={{ cursor: 'pointer'}}>Restart</em></p>
+      <p><em onClick={handleRestart} style={{ cursor: 'pointer' }}>Restart</em></p>
       {isGameOver && (
         <div className="game-over" style={{
-  position: "absolute", 
-  bottom: "-30%", 
-  left: "50%", 
-  transform: "translateX(-50%)",
-  textAlign: "center"
-}}>
+          position: "absolute",
+          bottom: "-30%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          textAlign: "center"
+        }}>
           <p>Game over!</p>
           <button className="button-fade3" onClick={onNext}>Get your clue</button>
         </div>
