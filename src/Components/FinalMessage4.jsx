@@ -9,7 +9,7 @@ const FinalMessage4 = ({ clue }) => {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           height: "400px",
-          filter: "brightness(1.6)"}}/>
+          filter: "brightness(1.8)"}}/>
       <p style={{position: "relative", zIndex: 10}}>You won, just like the first time.</p>
       <p style={{position: "relative", zIndex: 10}}>But real victory came when I saw you in person for the first time.</p>
       <p style={{position: "relative", zIndex: 10}}>Now it's time to relive that magic.</p>
