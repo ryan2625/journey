@@ -11,7 +11,6 @@ const Game3 = ({ onNext }) => {
     newBoard[index] = "X";
     setBoard(newBoard);
 
-    // Check for win or trigger AI move
     if (checkWin(newBoard)) {
       setIsGameOver(true);
     } else {
@@ -20,7 +19,6 @@ const Game3 = ({ onNext }) => {
   };
 
   const aiMove = (newBoard) => {
-    // Simple AI to "lose" intentionally
     const emptySquares = newBoard.reduce((acc, val, idx) => (val === null ? acc.concat(idx) : acc), []);
     const randomMove = emptySquares[Math.floor(Math.random() * emptySquares.length)];
     newBoard[randomMove] = "O";
@@ -46,16 +44,29 @@ const Game3 = ({ onNext }) => {
     return null;
   };
 
+  // Handle restart
+  const handleRestart = () => {
+    setBoard(Array(9).fill(null)); // Reset board
+    setIsGameOver(false); // Reset game over state
+  };
+
   return (
-    <div className="game-page">
+    <div className="game-page" style={{position: "relative"}}>
       <p>Each move brings us closer and closer to the start of something beautiful</p>
       <div className="tic-tac-toe">
         {board.map((cell, idx) => (
           <button key={idx} onClick={() => handleMove(idx)}>{cell}</button>
         ))}
       </div>
+      <p><em onClick={handleRestart} style={{ cursor: 'pointer'}}>Restart</em></p>
       {isGameOver && (
-        <div className="game-over">
+        <div className="game-over" style={{
+  position: "absolute", 
+  bottom: "-30%", 
+  left: "50%", 
+  transform: "translateX(-50%)",
+  textAlign: "center"
+}}>
           <p>Game over!</p>
           <button className="button-fade3" onClick={onNext}>Get your clue</button>
         </div>
