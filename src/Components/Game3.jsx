@@ -3,31 +3,47 @@ import React, { useState } from 'react';
 const Game3 = ({ onNext }) => {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isGameOver, setIsGameOver] = useState(false);
+  const [playerTurn, setPlayerTurn] = useState(true);  // New state to track the player's turn
+  const [winner, setWinner] = useState(null); // Track the winner
 
   const handleMove = (index) => {
-    if (isGameOver || board[index]) return;
+    if (isGameOver || !playerTurn || board[index]) return;  // If it's not the player's turn or the spot is taken, do nothing
 
-    const newBoard = board.slice();
-    newBoard[index] = "X";
-    setBoard(newBoard);
+    const newBoard = [...board]; // Copy the board
+    newBoard[index] = "X"; // Player makes their move
+    setBoard(newBoard); // Update the board state
 
-    if (checkWin(newBoard)) {
-      setIsGameOver(true); // Set game over if the player wins
+    const winner = checkWin(newBoard);
+    if (winner) {
+      if (winner === "X") {
+        setWinner("X"); // Player wins
+        setIsGameOver(true); // Set game over
+      }
     } else {
-      aiMove(newBoard);
+      setPlayerTurn(false); // Switch to AI's turn after player move
+      // Delay the AI move by 1.5 seconds
+      setTimeout(() => aiMove(newBoard), 1500);
     }
   };
 
-  const aiMove = (newBoard) => {
+  const aiMove = (currentBoard) => {
+    const newBoard = [...currentBoard]; // Copy the current board
     const emptySquares = newBoard.reduce((acc, val, idx) => (val === null ? acc.concat(idx) : acc), []);
-    const randomMove = emptySquares[Math.floor(Math.random() * emptySquares.length)];
-    newBoard[randomMove] = "O";
-    setBoard(newBoard);
+    
+    if (emptySquares.length === 0) return; // No empty squares, no move can be made
 
-    // If the AI wins, don't set game over, just let the player reset the game manually
-    if (checkWin(newBoard)) {
-      // No need to set game over; we'll leave it up to the user to restart
-      // setIsGameOver(true); // No need to do this anymore
+    const randomMove = emptySquares[Math.floor(Math.random() * emptySquares.length)];
+    newBoard[randomMove] = "O"; // AI makes its move
+    setBoard(newBoard); // Update the board state
+
+    const winner = checkWin(newBoard);
+    if (winner) {
+      if (winner === "O") {
+        setWinner("O"); // AI wins
+        setIsGameOver(true); // Set game over
+      }
+    } else {
+      setPlayerTurn(true); // Switch back to player's turn after AI move
     }
   };
 
@@ -40,7 +56,7 @@ const Game3 = ({ onNext }) => {
     for (const combo of winningCombos) {
       const [a, b, c] = combo;
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a];
+        return board[a]; // Return the winner ("X" or "O")
       }
     }
     return null;
@@ -48,8 +64,10 @@ const Game3 = ({ onNext }) => {
 
   // Handle manual restart
   const handleRestart = () => {
-    setBoard(Array(9).fill(null)); // Reset board
+    setBoard(Array(9).fill(null)); // Reset the board
     setIsGameOver(false); // Reset game over state
+    setWinner(null); // Reset winner state
+    setPlayerTurn(true); // Set the player's turn to true to start the game
   };
 
   return (
@@ -57,11 +75,17 @@ const Game3 = ({ onNext }) => {
       <p>Each move brings us closer and closer to the start of something beautiful</p>
       <div className="tic-tac-toe">
         {board.map((cell, idx) => (
-          <button key={idx} onClick={() => handleMove(idx)}>{cell}</button>
+          <button
+            key={idx}
+            onClick={() => handleMove(idx)}
+            disabled={!playerTurn || board[idx]}  // Disable button if it's not the player's turn or if the cell is filled
+          >
+            {cell}
+          </button>
         ))}
       </div>
       <p><em onClick={handleRestart} style={{ cursor: 'pointer' }}>Restart</em></p>
-      {isGameOver && (
+      {isGameOver && winner === "X" && (  // Only show Game Over if the player wins
         <div className="game-over" style={{
           position: "absolute",
           bottom: "-30%",
@@ -69,7 +93,7 @@ const Game3 = ({ onNext }) => {
           transform: "translateX(-50%)",
           textAlign: "center"
         }}>
-          <p>Game over!</p>
+          <p>Game over! You win!</p>
           <button className="button-fade3" onClick={onNext}>Get your clue</button>
         </div>
       )}

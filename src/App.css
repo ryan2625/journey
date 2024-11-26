@@ -18,6 +18,11 @@
   box-sizing: border-box;
 }
 
+.intro-page>p {
+  white-space: nowrap;
+  font-size: 17px;
+}
+
 .section.visible {
   opacity: 1;
   visibility: visible;
