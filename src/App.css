@@ -3,6 +3,7 @@
   max-width: 600px;
   margin: 0 auto;
   background-color: rgb(251, 217, 255);
+  overflow-x: hidden;
 }
 
 .section {
